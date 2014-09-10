@@ -1,11 +1,13 @@
-# How to JackSON_RDF
+# How to JackRDF
 
-	load 'JackSON_RDF.rb'
+Remember to load or require...
 
-BLALBALB
+	load 'JackRDF.rb'
 
-	rdf = JackSON_RDF.new( 'http://localhost:4321' )
+Create a new object.
 
-BLABALB
+	rdf = JackRDF.new( 'http://localhost:4321/ds' )
 
-	rdf.post( 'http://localhost/sample/manu.json', '/var/www/JackSON_RDF/sample/manu.json' )
+Create RDF from a JSON-LD file.
+
+	rdf.post( 'http://localhost/sample/manu.json', '/var/www/JackRDF/sample/manu.json' )

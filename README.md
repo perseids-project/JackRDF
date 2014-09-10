@@ -1,4 +1,4 @@
-# JackSON_RDF
+# JackRDF
 JackSON extension for 'on-the-fly' conversion of JSON-LD to Fuseki served RDF.
 
 # Install
@@ -11,11 +11,11 @@ Run...
 # Config
 Open fuseki.config and change the configuration if you so choose.
 
-	JACKSON_RDF="/var/www/JackSON_RDF/triples"
-	JACKSON_HOST="http://localhost"
-	JACKSON_PORT="4321"
-	JACKSON_DS="ds"
-	JACKSON_ENDPOINT=$JACKSON_HOST:$JACKSON_PORT/$JACKSON_DS
+	JACKRDF_TRIPLES="/var/www/JackRDF/triples"
+	JACKRDF_HOST="http://localhost"
+	JACKRDF_PORT="4321"
+	JACKRDF_DS="ds"
+	JACKRDF_ENDPOINT=$JACKSON_HOST:$JACKSON_PORT/$JACKSON_DS
 
 # Start
 Run...

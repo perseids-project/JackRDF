@@ -4,7 +4,7 @@
 # Install
 Run...
 
-	rake install
+	rake server:install
 
 ...to install Fuseki and the required gems
 
@@ -20,7 +20,7 @@ Open Rakefile and change the following config items if you must.
 # Start
 Run...
 
-	rake start
+	rake server:start
 
 ... to start up the Fuseki test server
 

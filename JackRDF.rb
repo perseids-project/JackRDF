@@ -10,12 +10,12 @@ class JackRDF
     @sparql = SparqlQuick.new( @endp )
   end
   
-  # url { String }
-  # file { String }
-  def post( url, file )
+  # urn { String } Subject URN
+  # file { String } Path to file
+  def post( urn, file )
     # Does this already exist?
-    if @sparql.count([ url.tagify,:p,:o ]) > 0
-      throw "#{url} graph already exists. Use .put()"
+    if @sparql.count([ urn.tagify,:p,:o ]) > 0
+      throw "#{urn} graph already exists. Use .put()"
     end
     
     hash = to_hash( File.read( file ) )
@@ -23,10 +23,10 @@ class JackRDF
       throw "#{file} is not JSON-LD"
     end
     
-    # The url to the JSON file becomes 
+    # The urn to the JSON file becomes 
     # the JSON-LD id which becomes the
     # RDF subject
-    hash['@id'] = url
+    hash['@id'] = urn
     
     # Convert to JSON-LD then to RDF
     jsonld = to_jsonld( hash )
@@ -36,16 +36,16 @@ class JackRDF
     @sparql._update.insert_data( rdf )
   end
   
-  # url { String }
-  # file { String }
-  def put( url, file )
-    delete( url )
-    post( url, file )
+  # urn { String } Subject URN
+  # file { String } Path to file
+  def put( urn, file )
+    delete( urn )
+    post( urn, file )
   end
   
-  # url { String }
-  def delete( url )
-    @sparql.delete([ url.tagify,:p,:o ])
+  # urn { String } Subject URN
+  def delete( urn )
+    @sparql.delete([ urn.tagify,:p,:o ])
   end
   
   private

@@ -1,21 +1,21 @@
 # How to JackRDF
 
-Remember to load or require...
+Remember to require...
 
-	load 'JackRDF.rb'
+	require 'JackRDF'
 
-Create a new object.
+Create a new object by passing a SPARQL endpoint url.
 
 	rdf = JackRDF.new( 'http://localhost:4321/ds' )
 
-Create graph from a JSON-LD file.
+Create RDF graph from a JSON-LD file.
 
-	rdf.post( 'http://localhost/sample/manu', '/var/www/JackRDF/sample/manu.json' )
+	rdf.post( 'http://localhost/sample/test', '/var/www/JackRDF/sample/post.json' )
 
-Delete graph associated with a subject URL
+Update RDF graph.
 
-	rdf.delete( 'http://localhost/sample/manu' )
+	rdf.put( 'http://localhost/sample/test', '/var/www/JackRDF/sample/put.json' )
 
-Update graph from
+Delete urn's RDF graph.
 
-	rdf.put( 'http://localhost/sample/manu', '/var/www/JackRDF/sample/manu.json' )
+	rdf.delete( 'http://localhost/sample/test' )

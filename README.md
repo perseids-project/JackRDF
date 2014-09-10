@@ -1,26 +1,28 @@
 # JackRDF
-JackSON extension for 'on-the-fly' conversion of JSON-LD to Fuseki served RDF.
+[JackSON](https://github.com/caesarfeta/JackSON) extension for 'on-the-fly' conversion of JSON-LD to Fuseki served RDF.
 
 # Install
 Run...
 
-	./install.sh
+	rake install
 
 ...to install Fuseki and the required gems
 
 # Config
-Open fuseki.config and change the configuration if you so choose.
+Open Rakefile and change the following config items if you must.
 
-	JACKRDF_TRIPLES="/var/www/JackRDF/triples"
-	JACKRDF_HOST="http://localhost"
-	JACKRDF_PORT="4321"
-	JACKRDF_DS="ds"
-	JACKRDF_ENDPOINT=$JACKSON_HOST:$JACKSON_PORT/$JACKSON_DS
+	FUSEKI_TRIPLES = "/var/www/JackRDF/triples"
+	FUSEKI_HOST = "http://localhost"
+	FUSEKI_PORT = "4321"
+	FUSEKI_DATASTORE = "ds"
+	FUSEKI_ENDPOINT = $FUSEKI_HOST:$FUSEKI_PORT/$FUSEKI_DATASTORE
 
 # Start
 Run...
 
-	./start.sh
+	rake start
+
+... to start up the Fuseki test server
 
 # API
 [See API.md](API.md)

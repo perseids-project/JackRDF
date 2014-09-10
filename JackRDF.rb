@@ -1,19 +1,24 @@
 require 'rubygems'
 require 'json/ld'
-require 'sparql/client'
+require 'sparql_model'
 
-class JackSON_RDF
+class JackRDF
   
+  # endp { String } Queryable Sparql endpoint
   def initialize( endp )
     @endp = endp
-    @update = SPARQL::Client.new( File.join( @endp, 'update' ) )
-    @query = SPARQL::Client.new( File.join( @endp, 'query' ) )
+    @sparql = SparqlQuick.new( @endp )
   end
   
+  # url { String }
+  # file { String }
   def post( url, file )
-    hash = to_hash( File.read( file ) )
+    # Does this already exist?
+    if @sparql.count([ url.tagify,:p,:o ]) > 0
+      throw "#{url} graph already exists. Use .put()"
+    end
     
-    # Is this a certain way of esuring JSON is JSON-LD?
+    hash = to_hash( File.read( file ) )
     if hash.has_key?('@context') == false
       throw "#{file} is not JSON-LD"
     end
@@ -26,30 +31,39 @@ class JackSON_RDF
     # Convert to JSON-LD then to RDF
     jsonld = to_jsonld( hash )
     rdf = to_rdf( jsonld )
-    
-    # Does this already exist?
-    
+        
     # Insert the RDF data
-    @update.insert_data( rdf )
+    @sparql._update.insert_data( rdf )
   end
   
-  def put
+  # url { String }
+  # file { String }
+  def put( url, file )
+    delete( url )
+    post( url, file )
   end
   
+  # url { String }
   def delete( url )
-    RDF::URI( url )
+    @sparql.delete([ url.tagify,:p,:o ])
   end
   
   private
   
+  # json { JSON }
+  # @return { Hash }
   def to_hash( json )
     JSON.parse( json )
   end
   
+  # hash { Hash }
+  # @return { JSON-LD }
   def to_jsonld( hash )
     JSON::LD::API.expand( hash )
   end
   
+  # jsonld { JSON-LD }
+  # @return { RDF::Graph }
   def to_rdf( jsonld )
     RDF::Graph.new << JSON::LD::API.toRdf( jsonld )
   end

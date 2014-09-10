@@ -8,6 +8,14 @@ Create a new object.
 
 	rdf = JackRDF.new( 'http://localhost:4321/ds' )
 
-Create RDF from a JSON-LD file.
+Create graph from a JSON-LD file.
 
-	rdf.post( 'http://localhost/sample/manu.json', '/var/www/JackRDF/sample/manu.json' )
+	rdf.post( 'http://localhost/sample/manu', '/var/www/JackRDF/sample/manu.json' )
+
+Delete graph associated with a subject URL
+
+	rdf.delete( 'http://localhost/sample/manu' )
+
+Update graph from
+
+	rdf.put( 'http://localhost/sample/manu', '/var/www/JackRDF/sample/manu.json' )

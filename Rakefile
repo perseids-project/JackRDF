@@ -32,7 +32,7 @@ namespace :server do
   desc "Start the Fuseki test server at port #{FUSEKI_PORT}"
   task :start do
     `mkdir -p #{FUSEKI_TRIPLES}`
-    Dir.chdir("fuseki/#{FUSEKI_DIR}") do
+    Dir.chdir("#{FUSEKI_DIR}") do
       IO.popen("./fuseki-server --update --loc=#{FUSEKI_TRIPLES} --port=#{FUSEKI_PORT} /#{FUSEKI_DATASTORE}") do |f|
         f.each { |l| puts l }
       end

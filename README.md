@@ -9,7 +9,7 @@ Run...
 ...to install Fuseki and the required gems
 
 # Config
-Open Rakefile and change the following config items if you must.
+Open Rakefile and change the following config items if necessary.
 
 	FUSEKI_TRIPLES = "/var/www/JackRDF/triples"
 	FUSEKI_HOST = "http://localhost"

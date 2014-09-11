@@ -1,7 +1,9 @@
 # JackRDF
 [JackSON](https://github.com/caesarfeta/JackSON) extension for 'on-the-fly' conversion of JSON-LD to Fuseki served RDF.
 
-The conversion is done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-ld/) a "fully conforming JSON-LD API processor". [Read the W3C draft for creating "JSON-LD API extensions for transforming to RDF".](http://json-ld.org/spec/latest/json-ld-rdf/)
+The conversion is done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-ld/) a "fully conforming JSON-LD API processor". 
+
+Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "JSON-LD API extensions for transforming to RDF".
 
 # Install
 Run...

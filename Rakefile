@@ -1,5 +1,6 @@
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'sparql_model'
 
 Rake::TestTask.new do |t|
   t.libs << 'test'
@@ -18,6 +19,20 @@ FUSEKI_ENDPOINT = "#{FUSEKI_HOST}:#{FUSEKI_PORT}/#{FUSEKI_DATASTORE}"
 
 desc "Run tests"
 task :default => :test
+
+namespace :data do
+  desc 'Destroy all Fuseki data'
+  task :destroy do
+    STDOUT.puts "Are you sure you want to destroy all triples at #{FUSEKI_ENDPOINT}? (y/n)"
+    input = STDIN.gets.strip
+    if input == 'y'
+      quick = SparqlQuick.new( FUSEKI_ENDPOINT )
+      quick.empty( :all )
+    else
+      STDOUT.puts "No triples were destroyed.  It's still all there :)"
+    end
+  end
+end
 
 namespace :server do
   desc 'Download and install Fuseki'

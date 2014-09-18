@@ -5,6 +5,8 @@ The conversion is done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-
 
 Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "JSON-LD API extensions for transforming to RDF".
 
+[Building Linked-Data Apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md)
+
 ## Install
 Run...
 
@@ -30,7 +32,7 @@ Run...
 
 ## Development
 
-* [All triples](http://localhost:4321/ds/query?query=select+%3Fs+%3Fp+%3Fo%0D%0Awhere+%7B+%3Fs+%3Fp+%3Fo+%7D&output=text&stylesheet=)
+* [See all of your triples](http://localhost:4321/ds/query?query=select+%3Fs+%3Fp+%3Fo%0D%0Awhere+%7B+%3Fs+%3Fp+%3Fo+%7D&output=text&stylesheet=)
 
 ## API
 [See API.md](API.md)

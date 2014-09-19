@@ -46,8 +46,8 @@ This goes in your Apache config usually it is **/etc/apache2/httpd.conf**
 	</Proxy>
 	
 	<Location /fuseki>
-		ProxyPass http://localhost:8080
-		ProxyPassReverse http://localhost:8080
+		ProxyPass http://localhost:4321
+		ProxyPassReverse http://localhost:4321
 	</Location>
 	
 	<LocationMatch /fuseki/[^/]+/update>
@@ -58,18 +58,22 @@ This goes in your Apache config usually it is **/etc/apache2/httpd.conf**
 
 Then use iptables to drop all packets sent to :8080 from anywhere but localhost.
 
-	sudo iptables -A INPUT -p tcp -s localhost --dport 8080 -j ACCEPT
-	sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
+	sudo iptables -A INPUT -p tcp -s localhost --dport 4321 -j ACCEPT
+	sudo iptables -A INPUT -p tcp --dport 4321 -j DROP
 
 To undo this...
 
-	sudo iptables -D INPUT -p tcp -s localhost --dport 8080 -j ACCEPT
-	sudo iptables -D INPUT -p tcp --dport 8080 -j DROP
+	sudo iptables -D INPUT -p tcp -s localhost --dport 4321 -j ACCEPT
+	sudo iptables -D INPUT -p tcp --dport 4321 -j DROP
 
 If you're using OSX you don't have **iptables**.  You can use **pfctl**.
-[Haven't done it myself but here's a tutorial.](http://blog.scottlowe.org/2013/05/15/using-pf-on-os-x-mountain-lion/)
+Haven't used it myself but [here's a tutorial.](http://blog.scottlowe.org/2013/05/15/using-pf-on-os-x-mountain-lion/)
 
-If anyone knows a better way of doing this let me know.
+If all goes well... 
+
+* Access to http://localhost:4321 should be forbidden.
+* http://localhost/fuseki/ds/query should be accessible to the world.
+* http://localhost/fuseki/ds/update should be forbidden everywhere but from the localhost.
 
 ## Development
 
@@ -79,5 +83,8 @@ If anyone knows a better way of doing this let me know.
 [See API.md](API.md)
 
 ## JSON-LD details
+Writing RDF compatible JSON-LD requires understanding both formats.
+That requires some homework.
+
 Currently JSON-LD does not support arrays of arrays ( aka list of lists ).
 See the [json-ld-rdf spec](http://json-ld.org/spec/latest/json-ld-rdf/) section 3.1.1 Methods:toRDF.

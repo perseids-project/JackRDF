@@ -36,7 +36,7 @@ You may not want them to update it however.
 
 The easiest way I know to secure Fuseki's update features is to use an Apache proxy combined with iptables.
 
-This goes in your Apache config usually it is **/etc/apache2/httpd.conf**
+This goes in your Apache config; usually that is **/etc/apache2/httpd.conf**
 
 	LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
 	ProxyRequests Off
@@ -74,6 +74,9 @@ If all goes well...
 * Access to http://localhost:4321 should be forbidden.
 * http://localhost/fuseki/ds/query should be accessible to the world.
 * http://localhost/fuseki/ds/update should be forbidden everywhere but from the localhost.
+	* This is needed for the JackRDF gem and JackSON to do their thing.
+
+Remember to update your application configs to point to the new URL.
 
 ## Development
 

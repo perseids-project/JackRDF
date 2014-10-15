@@ -56,7 +56,7 @@ This goes in your Apache config; usually that is **/etc/apache2/httpd.conf**
 		Allow from 127.0.0.0
 	</LocationMatch>
 
-Then use iptables to drop all packets sent to :8080 from anywhere but localhost.
+Then use iptables to drop all packets sent to :4321 from anywhere but localhost.
 
 	sudo iptables -A INPUT -p tcp -s localhost --dport 4321 -j ACCEPT
 	sudo iptables -A INPUT -p tcp --dport 4321 -j DROP

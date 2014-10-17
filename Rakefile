@@ -23,7 +23,7 @@ task :default => :test
 namespace :data do
   desc 'Destroy all Fuseki data'
   task :destroy do
-    STDOUT.puts "Are you sure you want to destroy all triples at #{FUSEKI_ENDPOINT}? (y/n)"
+    STDOUT.puts "Sure you want to destroy all triples in #{FUSEKI_ENDPOINT}? (y/n)"
     input = STDIN.gets.strip
     if input == 'y'
       quick = SparqlQuick.new( FUSEKI_ENDPOINT )

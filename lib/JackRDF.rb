@@ -12,14 +12,17 @@ class JackRDF
     @src_verb = "http://github.com/caesarfeta/JackSON/docs/SCHEMA.md#src"
   end
   
-  # url { String } URL to JSON
-  # file { String } Path to file
+  # load 'JackRDF.rb'
+  # rdf = JackRDF.new( 'http://localhost:4321/ds' )
+  # rdf.post( 'http://localhost:4567/test/urn/5', '/var/www/JackRDF/sample/urn.json' )
+  
+  # url { String } URL to JSON-LD
+  # file { String } Local path to JSON-LD
   def post( url, file )
-    urn = url
     
     # Does this already exist?
     if @sparql.count([ url.tagify,:p,:o ]) > 0
-      throw "#{urn} graph already exists. Use .put()"
+      throw "#{url} graph already exists. Use .put()"
     end
     
     # Turn JSON into a hash for checking
@@ -29,6 +32,13 @@ class JackRDF
     end
     context = hash['@context']
     
+    # CITE URN put() check
+    if cite_mode( hash, context ) == true
+      if @sparql.count([ hash['urn'].tagify,@src_verb.tagify,url ]) > 0
+        throw "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
+      end
+    end
+    
     # Add src
     context['src'] = @src_verb
     hash['src'] = url
@@ -36,22 +46,20 @@ class JackRDF
     # The urn to the JSON file becomes 
     # the JSON-LD id which becomes the
     # RDF subject
-    hash['@id'] = urn
+    hash['@id'] = url
     
     # Convert to JSON-LD then to RDF
     jsonld = to_jsonld( hash )
     rdf = to_rdf( jsonld )
     
     # CITE URN support
-    if hash.has_key?('urn') == true 
-      if context.has_key?('urn') && context['urn'] == @urn_verb
-        urn_rdf = RDF::Graph.new
-        rdf.each do |tri|
-          tri.subject = RDF::Resource.new( hash['urn'] )
-          urn_rdf << tri
-        end
-        rdf = urn_rdf
-      end 
+    if cite_mode( hash, context ) == true
+      urn_rdf = RDF::Graph.new
+      rdf.each do |tri|
+        tri.subject = RDF::Resource.new( hash['urn'] )
+        urn_rdf << tri
+      end
+      rdf = urn_rdf
     end
     
     # Insert the RDF data
@@ -71,6 +79,18 @@ class JackRDF
   end
   
   private
+  
+  # Check for CITE URN mode markers
+  # hash { Hash }
+  # context { Hash }
+  def cite_mode( hash, context )
+    if hash.has_key?('urn') == true 
+      if context.has_key?('urn') && context['urn'] == @urn_verb
+        return true
+      end
+    end
+    false
+  end
   
   # json { JSON }
   # @return { Hash }

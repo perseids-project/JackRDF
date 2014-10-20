@@ -9,6 +9,8 @@ Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "
 
 ## Install the JackRDF gem
 	rake build
+	gem build JackRDF.gemspec
+	gem install JackRDF-1.0.1.gem
 
 ## Install Fuseki
 	rake server:install

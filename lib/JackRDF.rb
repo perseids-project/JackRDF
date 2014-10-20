@@ -81,7 +81,8 @@ class JackRDF
     end
     
     # Make sure subject URN and source JSON match
-    if @sparql_model.count([ hash['urn'].tagify, @src_verb.tagify, url ]) != 1
+    puts @sparql.count([ hash['urn'].tagify, @src_verb.tagify, url ])
+    if @sparql.count([ hash['urn'].tagify, @src_verb.tagify, url ]) != 1
       throw "#{hash['urn']} is not src'd by #{url}"
     end
     

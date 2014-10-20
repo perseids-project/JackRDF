@@ -3,9 +3,9 @@
 
 The conversion is done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-ld/) a "fully conforming JSON-LD API processor". 
 
-Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "JSON-LD API extensions for transforming to RDF".
+Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "JSON-LD API extensions for transforming to RDF" for more info on JSON-LD and RDF's relationship.
 
-[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md)
+[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md).
 
 ## Install the JackRDF gem
 	rake build
@@ -51,7 +51,7 @@ This goes in your Apache config ( usually that is **/etc/apache2/httpd.conf** )
 		Allow from 127.0.0.0
 	</LocationMatch>
 
-Then use iptables to drop all packets sent to :4321 from anywhere but localhost.
+Then set iptables to drop all packets sent to **:4321** from anywhere but localhost.
 
 	sudo iptables -A INPUT -p tcp -s localhost --dport 4321 -j ACCEPT
 	sudo iptables -A INPUT -p tcp --dport 4321 -j DROP
@@ -61,21 +61,16 @@ To undo this...
 	sudo iptables -D INPUT -p tcp -s localhost --dport 4321 -j ACCEPT
 	sudo iptables -D INPUT -p tcp --dport 4321 -j DROP
 
-If you're using OSX you don't have **iptables**.  You can use **pfctl**.
+If you're using OSX you don't have **iptables**.  
+You can use **pfctl**.
 Haven't used it myself but [here's a tutorial.](http://blog.scottlowe.org/2013/05/15/using-pf-on-os-x-mountain-lion/)
 
 If all goes well... 
 
-* Access to http://localhost:4321 should be forbidden.
-* http://localhost/fuseki/ds/query should be accessible to the world.
-* http://localhost/fuseki/ds/update should be forbidden everywhere but from the localhost.
-	* This is needed for the JackRDF gem and JackSON to do their thing.
-
-Remember to update your application configs to point to the new URL.
-
-## Development
-
-* [See all of your triples](http://localhost:4321/ds/query?query=select+%3Fs+%3Fp+%3Fo%0D%0Awhere+%7B+%3Fs+%3Fp+%3Fo+%7D&output=text&stylesheet=)
+* Access to **http://localhost:4321** should be forbidden.
+* **http://localhost/fuseki/ds/query** should be accessible to the world.
+* **http://localhost/fuseki/ds/update** should be forbidden everywhere but from localhost.
+	* This is needed for JackRDF to work.
 
 ## API
 [See API.md](API.md)

@@ -78,14 +78,17 @@ class JackRDF
       return @sparql.delete([ url.tagify, :p, :o ])
     end
     
-    # Make sure subject URN and source JSON match-up
+    # Make sure subject URN and source JSON match
+    if @sparql_model.count([ hash['urn'].tagify, @src_verb.tagify, url ]) != 1
+      throw "#{hash['urn']} is not src'd by #{url}"
+    end
     
     # Delete the relevant triples
     context = hash['@context']
     context.each do |key,val|
       @sparql.delete([ hash['urn'].tagify, val.tagify, :o ])
     end
-    @sparql.delete([ hash['urn'].tagify, @src_verb.tagify, :o ])
+    @sparql.delete([ hash['urn'].tagify, @src_verb.tagify, url ])
   end
   
   private

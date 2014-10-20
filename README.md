@@ -5,7 +5,7 @@ The conversion is done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-
 
 Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "JSON-LD API extensions for transforming to RDF".
 
-[Building Linked-Data Apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md)
+[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md)
 
 ## Install the JackRDF gem
 	rake build
@@ -26,12 +26,12 @@ Open **Rakefile** and change the following config items if necessary.
 	rake server:start
 
 ## Securing
-You typically want to allow outsiders to query your Fuseki instance.
-You may not want them to update it however.
+You typically want to allow everyone to query your Fuseki instance; 
+however, you probably don't want everyone updating it.
 
 The easiest way I know to secure Fuseki's update features is to use an Apache proxy combined with iptables.
 
-This goes in your Apache config; usually that is **/etc/apache2/httpd.conf**
+This goes in your Apache config ( usually that is **/etc/apache2/httpd.conf** )
 
 	LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
 	ProxyRequests Off
@@ -79,10 +79,3 @@ Remember to update your application configs to point to the new URL.
 
 ## API
 [See API.md](API.md)
-
-## JSON-LD details
-Writing RDF compatible JSON-LD requires understanding both formats.
-That requires some homework.
-
-Currently JSON-LD does not support arrays of arrays ( aka list of lists ).
-See the [json-ld-rdf spec](http://json-ld.org/spec/latest/json-ld-rdf/) section 3.1.1 Methods:toRDF.

@@ -4,7 +4,7 @@
         "name": "http://localhost:4567/apps/elem/schema#name",
         "number": "http://localhost:4567/apps/elem/schema#number",
         "symbol": "http://localhost:4567/apps/elem/schema#symbol",
-        "urn": "http://github.com/caesarfeta/JackSON/docs/SCHEMA.md#urn"
+        "urn": "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#urn"
     },
     "mass": "6.64648x10^-24",
     "name": "Helium",

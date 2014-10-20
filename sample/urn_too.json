@@ -1,0 +1,8 @@
+{
+    "@context": {
+        "discoverer": "http://localhost:7890/apps/chem-hist/schema#discoverer",
+		"urn": "http://github.com/caesarfeta/JackSON/docs/SCHEMA.md#urn"
+    },
+    "discoverer": [ "Jules Janssen", "Norman Lockyer", "Per Teodor Cleve", "Nils Abraham Langlet" ],
+    "urn": "urn:cite:periodic:elem.2"
+}

@@ -12,14 +12,9 @@ class JackRDF
     @src_verb = "http://github.com/caesarfeta/JackSON/docs/SCHEMA.md#src"
   end
   
-  # load 'JackRDF.rb'
-  # rdf = JackRDF.new( 'http://localhost:4321/ds' )
-  # rdf.post( 'http://localhost:4567/test/urn/5', '/var/www/JackRDF/sample/urn.json' )
-  
   # url { String } URL to JSON-LD
   # file { String } Local path to JSON-LD
   def post( url, file )
-    
     # Does this already exist?
     if @sparql.count([ url.tagify,:p,:o ]) > 0
       throw "#{url} graph already exists. Use .put()"
@@ -33,15 +28,14 @@ class JackRDF
     context = hash['@context']
     
     # CITE URN put() check
-    if cite_mode( hash, context ) == true
+    if cite_mode( hash ) == true
       if @sparql.count([ hash['urn'].tagify,@src_verb.tagify,url ]) > 0
         throw "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
       end
+      # Add src
+      context['src'] = @src_verb
+      hash['src'] = url
     end
-    
-    # Add src
-    context['src'] = @src_verb
-    hash['src'] = url
     
     # RDF subject is url to JSON-LD by default
     hash['@id'] = url
@@ -51,7 +45,7 @@ class JackRDF
     rdf = to_rdf( jsonld )
     
     # CITE URN support
-    if cite_mode( hash, context ) == true
+    if cite_mode( hash ) == true
       urn_rdf = RDF::Graph.new
       rdf.each do |tri|
         tri.subject = RDF::Resource.new( hash['urn'] )
@@ -72,8 +66,26 @@ class JackRDF
   end
   
   # url { String } URL to JSON file
+  # file { String } Path to file
   def delete( url, file )
-    @sparql.delete([ urn.tagify,:p,:o ])
+    hash = to_hash( File.read( file ) )
+    if hash.has_key?('@context') == false
+      throw "#{file} is not JSON-LD"
+    end
+    
+    # Non-CITE MODE deletion is easy
+    if cite_mode( hash ) == false
+      return @sparql.delete([ url.tagify, :p, :o ])
+    end
+    
+    # Make sure subject URN and source JSON match-up
+    
+    # Delete the relevant triples
+    context = hash['@context']
+    context.each do |key,val|
+      @sparql.delete([ hash['urn'].tagify, val.tagify, :o ])
+    end
+    @sparql.delete([ hash['urn'].tagify, @src_verb.tagify, :o ])
   end
   
   private
@@ -81,7 +93,8 @@ class JackRDF
   # Check for CITE URN mode markers
   # hash { Hash }
   # context { Hash }
-  def cite_mode( hash, context )
+  def cite_mode( hash )
+    context = hash['@context']
     if hash.has_key?('urn') == true 
       if context.has_key?('urn') && context['urn'] == @urn_verb
         return true

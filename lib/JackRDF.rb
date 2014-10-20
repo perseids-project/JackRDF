@@ -49,6 +49,8 @@ class JackRDF
       urn_rdf = RDF::Graph.new
       rdf.each do |tri|
         tri.subject = RDF::Resource.new( hash['urn'] )
+        # URN verb is redundant in CITE mode
+        next if tri.predicate == @urn_verb
         urn_rdf << tri
       end
       rdf = urn_rdf
@@ -73,7 +75,7 @@ class JackRDF
       throw "#{file} is not JSON-LD"
     end
     
-    # Non-CITE MODE deletion is easy
+    # Non-CITE mode deletion is easy
     if cite_mode( hash ) == false
       return @sparql.delete([ url.tagify, :p, :o ])
     end
@@ -93,9 +95,8 @@ class JackRDF
   
   private
   
-  # Check for CITE URN mode markers
+  # Check for CITE mode markers
   # hash { Hash }
-  # context { Hash }
   def cite_mode( hash )
     context = hash['@context']
     if hash.has_key?('urn') == true 

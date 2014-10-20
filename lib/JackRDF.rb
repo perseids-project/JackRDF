@@ -8,8 +8,8 @@ class JackRDF
   def initialize( endp )
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
-    @urn_verb = "http://github.com/caesarfeta/JackSON/docs/SCHEMA.md#urn"
-    @src_verb = "http://github.com/caesarfeta/JackSON/docs/SCHEMA.md#src"
+    @urn_verb = "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#urn"
+    @src_verb = "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#src"
   end
   
   # url { String } URL to JSON-LD

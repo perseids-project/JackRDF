@@ -1,4 +1,4 @@
-# How to JackRDF
+# JackRDF
 
 Remember to require...
 
@@ -16,6 +16,6 @@ Update RDF graph.
 
 	rdf.put( 'http://localhost/sample/test', '/var/www/JackRDF/sample/put.json' )
 
-Delete urn's RDF graph.
+Delete triples defined in JSON-LD from RDF graph.
 
-	rdf.delete( 'http://localhost/sample/test' )
+	rdf.delete( 'http://localhost/sample/test', '/var/www/JackRDF/sample/put.json' )

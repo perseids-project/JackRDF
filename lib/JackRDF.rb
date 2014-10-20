@@ -43,9 +43,7 @@ class JackRDF
     context['src'] = @src_verb
     hash['src'] = url
     
-    # The urn to the JSON file becomes 
-    # the JSON-LD id which becomes the
-    # RDF subject
+    # RDF subject is url to JSON-LD by default
     hash['@id'] = url
     
     # Convert to JSON-LD then to RDF

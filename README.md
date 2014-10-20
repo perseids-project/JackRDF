@@ -7,12 +7,11 @@ Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "
 
 [Building Linked-Data Apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md)
 
-## Install
-Run...
+## Install the JackRDF gem
+	rake build
 
+## Install Fuseki
 	rake server:install
-
-...to install Fuseki and the required gems
 
 ## Config
 Open **Rakefile** and change the following config items if necessary.
@@ -24,14 +23,10 @@ Open **Rakefile** and change the following config items if necessary.
 	FUSEKI_ENDPOINT = "#{FUSEKI_HOST}:#{FUSEKI_PORT}/#{FUSEKI_DATASTORE}"
 
 ## Start
-Run...
-
 	rake server:start
 
-... to start up the Fuseki test server
-
 ## Securing
-You typically want to allow outsiders to query your fuseki instance.
+You typically want to allow outsiders to query your Fuseki instance.
 You may not want them to update it however.
 
 The easiest way I know to secure Fuseki's update features is to use an Apache proxy combined with iptables.

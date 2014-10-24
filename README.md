@@ -1,11 +1,15 @@
 # JackRDF
-[JackSON](https://github.com/caesarfeta/JackSON) extension for 'on-the-fly' conversion of JSON-LD to Fuseki served RDF.
+Use JackRDF to...
 
-The conversion is done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-ld/) a "fully conforming JSON-LD API processor". 
+* easily install a Fuseki triple-store
+* convert JSON-LD files to Fuseki served RDF...
+	* with support for custom URNs
 
-Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for creating "JSON-LD API extensions for transforming to RDF" for more info on JSON-LD and RDF's relationship.
+JackRDF works with [JackSON](https://github.com/caesarfeta/JackSON) to create a hybrid Fuseki/file-system database useful for application development and small-scale hosting.
 
-[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md).
+RDF conversion is mostly done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-ld/). 
+
+Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for more info on JSON-LD and RDF's relationship.
 
 ## Install the JackRDF gem
 	rake build
@@ -76,3 +80,6 @@ If all goes well...
 
 ## API
 [See API.md](API.md)
+
+## Develop
+[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md).

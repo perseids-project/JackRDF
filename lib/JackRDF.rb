@@ -40,30 +40,39 @@ class JackRDF
     # RDF subject is url to JSON-LD by default
     hash['@id'] = url
     
-    # Convert to JSON-LD then to RDF
-    jsonld = to_jsonld( hash )
-    rdf = to_rdf( jsonld )
+    # Convert to RDF
+    rdf = hash_to_rdf( hash )
     
     # CITE URN support
     if cite_mode( hash ) == true
-      urn_rdf = RDF::Graph.new
-      rdf.each do |tri|
-        tri.subject = RDF::Resource.new( hash['urn'] )
-        # URN verb is redundant in CITE mode
-        next if tri.predicate == @urn_verb
-        urn_rdf << tri
-      end
-      rdf = urn_rdf
+      rdf = urn_rdf( hash, rdf )
     end
     
     # Insert the RDF data
     @sparql._update.insert_data( rdf )
   end
   
+  # hash { Hash }
+  def urn_rdf( hash, rdf )
+    urn_rdf = RDF::Graph.new
+    rdf.each do |tri|
+      tri.subject = RDF::Resource.new( hash['urn'] )
+      # URN verb is redundant in CITE mode
+      next if tri.predicate == @urn_verb
+      urn_rdf << tri
+    end
+    urn_rdf
+  end
+  
+  # hash { Hash }
+  def hash_to_rdf( hash )
+    rdf = to_rdf( to_jsonld( hash ) )
+  end
+  
   # url { String } URL to JSON file
   # file { String } Path to file
   def put( url, file )
-    delete( urn )
+    delete( urn, file )
     post( urn, file )
   end
   
@@ -87,9 +96,9 @@ class JackRDF
     end
     
     # Delete the relevant triples
-    context = hash['@context']
-    context.each do |key,val|
-      @sparql.delete([ hash['urn'].tagify, val.tagify, :o ])
+    rdf = urn_rdf( hash, hash_to_rdf( hash ) )
+    rdf.each do |tri|
+      @sparql._update.delete_data( @sparql.graph( tri ) )
     end
     @sparql.delete([ hash['urn'].tagify, @src_verb.tagify, url ])
   end

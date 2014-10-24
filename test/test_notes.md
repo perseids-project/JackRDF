@@ -1,6 +1,11 @@
+	# Where to check
+	http://127.0.0.1:4321/ds/query?query=select+%3Fs+%3Fp+%3Fo%0D%0Awhere+%7B+%3Fs+%3Fp+%3Fo+%7D&output=text&stylesheet=
+		
+	# Get ready
 	cd /var/www/JackRDF/lib
 	irb -I .
 	
+	# Initialize JackRDF
 	load 'JackRDF.rb'
 	rdf = JackRDF.new( 'http://localhost:4321/ds' )
 	

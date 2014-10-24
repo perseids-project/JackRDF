@@ -82,4 +82,4 @@ If all goes well...
 [See API.md](API.md)
 
 ## Develop
-[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/APP.md).
+[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/docs/APP.md).

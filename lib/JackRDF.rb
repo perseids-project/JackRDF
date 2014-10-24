@@ -46,18 +46,23 @@ class JackRDF
     
     # CITE URN support
     if cite_mode( hash ) == true
-      urn_rdf = RDF::Graph.new
-      rdf.each do |tri|
-        tri.subject = RDF::Resource.new( hash['urn'] )
-        # URN verb is redundant in CITE mode
-        next if tri.predicate == @urn_verb
-        urn_rdf << tri
-      end
-      rdf = urn_rdf
+      rdf = urn_rdf( hash )
     end
     
     # Insert the RDF data
     @sparql._update.insert_data( rdf )
+  end
+  
+  # hash { Hash }
+  def urn_rdf( hash )
+    urn_rdf = RDF::Graph.new
+    rdf.each do |tri|
+      tri.subject = RDF::Resource.new( hash['urn'] )
+      # URN verb is redundant in CITE mode
+      next if tri.predicate == @urn_verb
+      urn_rdf << tri
+    end
+    urn_rdf
   end
   
   # url { String } URL to JSON file

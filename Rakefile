@@ -4,8 +4,8 @@ require 'sparql_model'
 
 Rake::TestTask.new do |t|
   t.libs = ['test']
-  t.warning = true
-  t.verbose = true
+#  t.warning = true
+#  t.verbose = true
   t.test_files = FileList[ 'test/*rb' ]
 end
 

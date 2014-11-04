@@ -21,7 +21,7 @@ class JackRDF
     end
     
     # Turn JSON into a hash for checking
-    hash = to_hash( File.read( file ) )
+    hash = file_to_hash( file )
     if hash.has_key?('@context') == false
       throw "#{file} is not JSON-LD"
     end
@@ -112,8 +112,6 @@ class JackRDF
     @sparql.delete([ hash['@id'].tagify, @src_verb.tagify, url ])
   end
   
-  private
-  
   # Check for CITE mode markers
   # hash { Hash }
   def id_mode( hash )
@@ -124,6 +122,12 @@ class JackRDF
       end
     end
     false
+  end
+  
+  # file { String } Path to file
+  # @return { Hash }
+  def file_to_hash( file )
+    to_hash( File.read( file ) )
   end
   
   # json { JSON }

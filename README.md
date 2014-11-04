@@ -83,3 +83,6 @@ If all goes well...
 
 ## Develop
 [Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/docs/APP.md).
+
+## CITE URNs and relative IRIs
+JackRDF 

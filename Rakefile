@@ -6,7 +6,6 @@ Rake::TestTask.new do |t|
   t.libs << 'test'
 end
 
-
 FUSEKI_VERSION = "1.0.2"
 FUSEKI_DIR = "jena-fuseki-#{FUSEKI_VERSION}"
 FUSEKI_TAR = "#{FUSEKI_DIR}-distribution.tar.gz"

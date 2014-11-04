@@ -1,0 +1,12 @@
+{
+	"@context": {
+		"urn": "http://data.perseus.org/collections/urn:",
+		"rdf": "http://perseus.org/rdf/",
+		"redirect_to": { "@id": "rdf:redirectTo" }
+	},
+	"@id": "urn:cite:perseus:author.1.1",
+	"redirect_to": [
+		{ "@id": "urn:cite:perseus:author.1.2" },
+		{ "@id": "urn:cite:perseus:author.2.4" }
+	]
+}

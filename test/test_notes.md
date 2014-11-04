@@ -43,4 +43,7 @@
 	rdf.delete('http://localhost:4567/test/urn/1', '/var/www/JackRDF/sample/urn_02.json' )
 	# Only Santa Clause should remain!
 	rake data:destroy
-
+	
+	rdf.post('http://localhost:4567/test/urn/1', '/var/www/JackRDF/sample/id.json' )
+	# Make sure relative IRIs
+	rake data:destroy

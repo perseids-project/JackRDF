@@ -9,7 +9,7 @@ JackRDF works with [JackSON](https://github.com/caesarfeta/JackSON) to create a 
 
 RDF conversion is mostly done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-ld/). 
 
-Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for more info on JSON-LD and RDF's relationship.
+This [W3C draft describes JSON-LD and RDF's relationship](http://json-ld.org/spec/latest/json-ld-rdf/).
 
 ## Install the JackRDF gem
 	rake build

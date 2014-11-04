@@ -10,7 +10,7 @@ class TestRdf < Minitest::Test
     rdf = JackRDF.new( Fuseki.ds )
     rdf.post( 'http://localhost:4567/test/urn/1', 'sample/urn.json' )
     puts Fuseki.get
-    Fuseki.empty
+    #Fuseki.empty
     assert( true )
   end
   
@@ -18,6 +18,7 @@ class TestRdf < Minitest::Test
   #  rdf = JackRDF.new( 'http://localhost:4321/ds' )
   #  rdf.post( 'http://localhost:4567/test/urn/1', 'sample/urn.json' )
   #  rdf.delete( 'http://localhost:4567/test/urn/1', 'sample/urn.json' )
+  #  check = Fuseki.get
   #  assert( true )
   #end
   
@@ -28,8 +29,16 @@ class Fuseki
     "http://localhost:4321/ds"
   end
   
+  def self.select
+    "select+%3Fs+%3Fp+%3Fo%0D%0Awhere+%7B+%3Fs+%3Fp+%3Fo+%7D"
+  end
+  
+  def self.url
+    "#{self.ds}/query?query=#{self.select}&output=json"
+  end
+  
   def self.get
-    json = JSON.parse( RestClient.get( "#{self.ds}/query?query=select+%3Fs+%3Fp+%3Fo%0D%0Awhere+%7B+%3Fs+%3Fp+%3Fo+%7D&output=json" ) )
+    json = JSON.parse( RestClient.get( self.url ) )
     json["results"]["bindings"]
   end
   

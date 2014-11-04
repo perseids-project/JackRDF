@@ -79,10 +79,7 @@ If all goes well...
 	* This is needed for JackRDF to work.
 
 ## API
-[See API.md](API.md)
-
-## Develop
-[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/docs/APP.md).
+[See API.md](https://github.com/caesarfeta/JackRDF/blob/master/docs/API.md)
 
 ## CITE URNs and relative IRIs
 If you want to use relative IRIs which means CITE URNs like this...

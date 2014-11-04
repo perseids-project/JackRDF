@@ -5,6 +5,9 @@ require 'JackRDF'
 require 'rest_client'
 require 'sparql_model'
 
+# Want to run a single test?
+# You probably do when developing.
+# ruby test/test_rdf.rb --name test_AAA_post
 class TestRdf < Minitest::Test
   
   # Make sure post method uses URL if no @id value is present
@@ -29,7 +32,7 @@ class TestRdf < Minitest::Test
     rdf.post( 'http://localhost:4567/test/urn/1', 'sample/post.json' )
     rdf.delete( 'http://localhost:4567/test/urn/1', 'sample/post.json' )
     check = Fuseki.get
-    assert( check.length, 0 )
+    assert_equal( check.length, 0 )
   end
   
   # Make sure double posts are blocked
@@ -46,7 +49,8 @@ class TestRdf < Minitest::Test
     assert( false )
   end
   
-  # Make sure CITE URNs are used as subject nodes when id_mode conditions are met
+  # Make sure CITE URNs are used as subject nodes 
+  # when id_mode conditions are met
   def test_AAD_cite_urn_subject
     Fuseki.empty
     rdf = Fuseki.handle
@@ -60,6 +64,24 @@ class TestRdf < Minitest::Test
       end
     end
     assert( true )
+  end
+  
+  # Make sure all sources are recorded 
+  # when using CITE URNs as subject nodes
+  def test_AAE_cite_urn_multi
+    Fuseki.empty
+    rdf = Fuseki.handle
+    (1..3).each do |n|
+      rdf.post( "http://localhost:4567/test/urn/#{n}", "sample/cite/urn_0#{n}.json" )
+    end
+    check = Fuseki.get
+    count = 0
+    check.each do |tri|
+      if tri["p"]["value"] == "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
+        count += 1
+      end
+    end
+    assert_equal( count, 3 )
   end
   
 end

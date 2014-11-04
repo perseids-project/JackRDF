@@ -9,7 +9,7 @@ class JackRDF
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
     @urn_verb = "http://data.perseus.org/collections/urn:"
-    @src_verb = "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#src"
+    @src_verb = "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
   end
   
   # url { String } URL to JSON-LD

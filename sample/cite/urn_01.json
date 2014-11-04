@@ -1,14 +1,14 @@
 {
     "@context": {
+        "urn": "http://data.perseus.org/collections/urn:",
         "mass": "http://localhost:4567/apps/elem/schema#mass",
         "name": "http://localhost:4567/apps/elem/schema#name",
         "number": "http://localhost:4567/apps/elem/schema#number",
-        "symbol": "http://localhost:4567/apps/elem/schema#symbol",
-        "urn": "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#urn"
+        "symbol": "http://localhost:4567/apps/elem/schema#symbol"
     },
+    "@id": "urn:cite:periodic:elem.2",
     "mass": "6.64648x10^-24",
     "name": "Helium",
     "number": "2",
-    "symbol": "He",
-    "urn": "urn:cite:periodic:elem.2"
+    "symbol": "He"
 }

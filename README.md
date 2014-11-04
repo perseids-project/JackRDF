@@ -85,4 +85,36 @@ If all goes well...
 [Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/docs/APP.md).
 
 ## CITE URNs and relative IRIs
-JackRDF 
+If you want to use relative IRIs which means CITE URNs like this...
+
+	<urn:cite:perseus:author.1.1>
+
+Make sure this line is in lib/JackRDF.rb
+
+    @urn_verb = "http://data.perseus.org/collections/urn:"
+
+JSON-LD that looks like this...
+
+	{
+		"@context": {
+			"urn": "http://data.perseus.org/collections/urn:",
+			"rdf": "http://perseus.org/rdf/",
+			"redirect_to": { "@id": "rdf:redirectTo" }
+		},
+		"@id": "urn:cite:perseus:author.1.1",
+		"redirect_to": [
+			{ "@id": "urn:cite:perseus:author.1.2" },
+			{ "@id": "urn:cite:perseus:author.2.4" }
+		]
+	}
+
+...will produce triples like this...
+
+	<urn:cite:perseus:author.1.1> | <http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#src> | "http://localhost:4567/test/urn/1"
+	<urn:cite:perseus:author.1.1> | <http://perseus.org/rdf/redirectTo>                                   | <urn:cite:perseus:author.1.2>     
+	<urn:cite:perseus:author.1.1> | <http://perseus.org/rdf/redirectTo>                                   | <urn:cite:perseus:author.2.4>     
+
+...instead of the default...
+
+	<http://localhost:4567/test/urn/1> | <http://perseus.org/rdf/redirectTo> | <http://data.perseus.org/collections/urn:cite:perseus:author.1.2>
+	<http://localhost:4567/test/urn/1> | <http://perseus.org/rdf/redirectTo> | <http://data.perseus.org/collections/urn:cite:perseus:author.2.4>

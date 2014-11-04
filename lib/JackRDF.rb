@@ -109,7 +109,7 @@ class JackRDF
     rdf.each do |tri|
       @sparql._update.delete_data( @sparql.graph( tri ) )
     end
-    @sparql.delete([ hash['urn'].tagify, @src_verb.tagify, url ])
+    @sparql.delete([ hash['@id'].tagify, @src_verb.tagify, url ])
   end
   
   private

@@ -8,8 +8,8 @@ class JackRDF
   def initialize( endp )
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
-    @urn_verb = "http://data.perseus.org/collections/urn:"
-    @src_verb = "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
+    @urn = "http://data.perseus.org/collections/urn:"
+    @src = "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
   end
   
   # url { String } URL to JSON-LD
@@ -29,11 +29,11 @@ class JackRDF
     
     # CITE URN put() check
     if id_mode( hash ) == true
-      if @sparql.count([ hash['@id'].tagify,@src_verb.tagify,url ]) > 0
+      if @sparql.count([ hash['@id'].tagify,@src.tagify,url ]) > 0
         throw "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
       end
       # Add src
-      context['src'] = @src_verb
+      context['src'] = @src
       hash['src'] = url
     end
     
@@ -67,8 +67,8 @@ class JackRDF
   
   def urn_obj( obj )
     str = obj.to_s
-    if str.include?( @urn_verb )
-      return RDF::Resource.new( str.sub( @urn_verb, 'urn:' ) )
+    if str.include?( @urn )
+      return RDF::Resource.new( str.sub( @urn, 'urn:' ) )
     end
     obj
   end
@@ -99,8 +99,8 @@ class JackRDF
     end
     
     # Make sure subject URN and source JSON match
-    puts @sparql.count([ hash['@id'].tagify, @src_verb.tagify, url ])
-    if @sparql.count([ hash['@id'].tagify, @src_verb.tagify, url ]) != 1
+    puts @sparql.count([ hash['@id'].tagify, @src.tagify, url ])
+    if @sparql.count([ hash['@id'].tagify, @src.tagify, url ]) != 1
       throw "#{hash['@id']} is not src'd by #{url}"
     end
     
@@ -109,7 +109,7 @@ class JackRDF
     rdf.each do |tri|
       @sparql._update.delete_data( @sparql.graph( tri ) )
     end
-    @sparql.delete([ hash['@id'].tagify, @src_verb.tagify, url ])
+    @sparql.delete([ hash['@id'].tagify, @src.tagify, url ])
   end
   
   # Check for CITE mode markers
@@ -117,7 +117,7 @@ class JackRDF
   def id_mode( hash )
     context = hash['@context']
     if hash.has_key?('@id') == true 
-      if context.has_key?('urn') && context['urn'] == @urn_verb && hash['@id'].include?( 'urn:' )
+      if context.has_key?('urn') && context['urn'] == @urn && hash['@id'].include?( 'urn:' )
         return true
       end
     end

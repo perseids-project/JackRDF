@@ -88,7 +88,7 @@ If you want to use relative IRIs which means CITE URNs like this...
 
 Make sure this line is in lib/JackRDF.rb
 
-    @urn_verb = "http://data.perseus.org/collections/urn:"
+    @urn = "http://data.perseus.org/collections/urn:"
 
 JSON-LD that looks like this...
 

@@ -38,7 +38,7 @@ class JackRDF
     end
     
     # RDF subject is url to JSON-LD by default
-    if id_mode( hash ) == false
+    if hash.has_key?('@id') == false
       hash['@id'] = url
     end
     

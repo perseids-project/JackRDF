@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'benchmark'
 require 'rest_client'
-require 'JackRDF'
+require_relative '../lib/JackRDF'
 require 'rest_client'
 require 'sparql_model'
 
@@ -96,8 +96,31 @@ class TestRdf < Minitest::Test
       rdf.delete( "http://localhost:4567/test/urn/#{n}", "sample/cite/urn_0#{n}.json" )
     end
     check = Help.get
-    puts check.inspect
-    assert( true )
+    disc = 0
+    src = 0
+    check.each do |item|
+      if item["p"]["value"].include?( "discoverer" )
+        disc += 1
+      end
+      if item["p"]["value"].include?( "src" )
+        src += 1
+      end
+    end
+    if src == 1 && disc == 1
+      assert( true )
+      return
+    end
+    assert( false )
+  end
+  
+  # JSON-LD with specified id attribute
+  # does not default to filename
+  def test_AAG_no_urn_id
+    Help.empty
+    rdf = Help.handle
+    rdf.post( "http://localhost:4567/test/urn/1", "sample/no_urn_id.json" )
+    check = Help.get
+    assert_equal( check[0]["s"]["value"], "http://github.com/caesarfeta/JackRDF" )
   end
 end
 

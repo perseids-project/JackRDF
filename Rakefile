@@ -3,9 +3,11 @@ require 'rake/testtask'
 require 'sparql_model'
 
 Rake::TestTask.new do |t|
-  t.libs << 'test'
+  t.libs = ['test']
+#  t.warning = true
+#  t.verbose = true
+  t.test_files = FileList[ 'test/*rb' ]
 end
-
 
 FUSEKI_VERSION = "1.0.2"
 FUSEKI_DIR = "jena-fuseki-#{FUSEKI_VERSION}"

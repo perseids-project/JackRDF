@@ -1,0 +1,8 @@
+{
+    "@context": {
+		"urn": "http://data.perseus.org/collections/urn:",
+        "discoverer": "http://localhost:4567/apps/elem/schema#discoverer"
+    },
+	"@id": "urn:cite:periodic:elem.2",
+    "discoverer": [ "Jules Janssen", "Norman Lockyer", "Per Teodor Cleve", "Nils Abraham Langlet" ]
+}

@@ -8,8 +8,8 @@ class JackRDF
   def initialize( endp )
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
-    @urn_verb = "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#urn"
-    @src_verb = "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#src"
+    @urn_verb = "http://data.perseus.org/collections/urn:"
+    @src_verb = "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
   end
   
   # url { String } URL to JSON-LD
@@ -21,15 +21,15 @@ class JackRDF
     end
     
     # Turn JSON into a hash for checking
-    hash = to_hash( File.read( file ) )
+    hash = file_to_hash( file )
     if hash.has_key?('@context') == false
       throw "#{file} is not JSON-LD"
     end
     context = hash['@context']
     
     # CITE URN put() check
-    if cite_mode( hash ) == true
-      if @sparql.count([ hash['urn'].tagify,@src_verb.tagify,url ]) > 0
+    if id_mode( hash ) == true
+      if @sparql.count([ hash['@id'].tagify,@src_verb.tagify,url ]) > 0
         throw "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
       end
       # Add src
@@ -38,13 +38,15 @@ class JackRDF
     end
     
     # RDF subject is url to JSON-LD by default
-    hash['@id'] = url
+    if hash.has_key?('@id') == false
+      hash['@id'] = url
+    end
     
     # Convert to RDF
     rdf = hash_to_rdf( hash )
     
     # CITE URN support
-    if cite_mode( hash ) == true
+    if id_mode( hash ) == true
       rdf = urn_rdf( hash, rdf )
     end
     
@@ -56,12 +58,19 @@ class JackRDF
   def urn_rdf( hash, rdf )
     urn_rdf = RDF::Graph.new
     rdf.each do |tri|
-      tri.subject = RDF::Resource.new( hash['urn'] )
-      # URN verb is redundant in CITE mode
-      next if tri.predicate == @urn_verb
+      tri.subject = RDF::Resource.new( hash['@id'] )
+      tri.object = urn_obj( tri.object )
       urn_rdf << tri
     end
     urn_rdf
+  end
+  
+  def urn_obj( obj )
+    str = obj.to_s
+    if str.include?( @urn_verb )
+      return RDF::Resource.new( str.sub( @urn_verb, 'urn:' ) )
+    end
+    obj
   end
   
   # hash { Hash }
@@ -85,14 +94,14 @@ class JackRDF
     end
     
     # Non-CITE mode deletion is easy
-    if cite_mode( hash ) == false
+    if id_mode( hash ) == false
       return @sparql.delete([ url.tagify, :p, :o ])
     end
     
     # Make sure subject URN and source JSON match
-    puts @sparql.count([ hash['urn'].tagify, @src_verb.tagify, url ])
-    if @sparql.count([ hash['urn'].tagify, @src_verb.tagify, url ]) != 1
-      throw "#{hash['urn']} is not src'd by #{url}"
+    puts @sparql.count([ hash['@id'].tagify, @src_verb.tagify, url ])
+    if @sparql.count([ hash['@id'].tagify, @src_verb.tagify, url ]) != 1
+      throw "#{hash['@id']} is not src'd by #{url}"
     end
     
     # Delete the relevant triples
@@ -100,21 +109,25 @@ class JackRDF
     rdf.each do |tri|
       @sparql._update.delete_data( @sparql.graph( tri ) )
     end
-    @sparql.delete([ hash['urn'].tagify, @src_verb.tagify, url ])
+    @sparql.delete([ hash['@id'].tagify, @src_verb.tagify, url ])
   end
-  
-  private
   
   # Check for CITE mode markers
   # hash { Hash }
-  def cite_mode( hash )
+  def id_mode( hash )
     context = hash['@context']
-    if hash.has_key?('urn') == true 
-      if context.has_key?('urn') && context['urn'] == @urn_verb
+    if hash.has_key?('@id') == true 
+      if context.has_key?('urn') && context['urn'] == @urn_verb && hash['@id'].include?( 'urn:' )
         return true
       end
     end
     false
+  end
+  
+  # file { String } Path to file
+  # @return { Hash }
+  def file_to_hash( file )
+    to_hash( File.read( file ) )
   end
   
   # json { JSON }

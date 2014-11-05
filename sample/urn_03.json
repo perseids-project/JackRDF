@@ -1,8 +1,0 @@
-{
-    "@context": {
-        "discoverer": "http://localhost:7890/apps/chem-hist/schema#discoverer",
-		"urn": "http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#urn"
-    },
-    "discoverer": [ "Santa Clause" ],
-    "urn": "urn:cite:periodic:elem.2"
-}

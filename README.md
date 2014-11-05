@@ -9,7 +9,7 @@ JackRDF works with [JackSON](https://github.com/caesarfeta/JackSON) to create a 
 
 RDF conversion is mostly done with [ruby-rdf/json-ld](https://github.com/ruby-rdf/json-ld/). 
 
-Read the [W3C draft](http://json-ld.org/spec/latest/json-ld-rdf/) for more info on JSON-LD and RDF's relationship.
+This [W3C draft describes JSON-LD and RDF's relationship](http://json-ld.org/spec/latest/json-ld-rdf/).
 
 ## Install the JackRDF gem
 	rake build
@@ -79,7 +79,39 @@ If all goes well...
 	* This is needed for JackRDF to work.
 
 ## API
-[See API.md](API.md)
+[See API.md](https://github.com/caesarfeta/JackRDF/blob/master/docs/API.md)
 
-## Develop
-[Building linked-data apps with JackSON](https://github.com/caesarfeta/JackSON/blob/master/docs/APP.md).
+## CITE URNs and relative IRIs
+If you want to use relative IRIs which means CITE URNs like this...
+
+	<urn:cite:perseus:author.1.1>
+
+Make sure this line is in lib/JackRDF.rb
+
+    @urn_verb = "http://data.perseus.org/collections/urn:"
+
+JSON-LD that looks like this...
+
+	{
+		"@context": {
+			"urn": "http://data.perseus.org/collections/urn:",
+			"rdf": "http://perseus.org/rdf/",
+			"redirect_to": { "@id": "rdf:redirectTo" }
+		},
+		"@id": "urn:cite:perseus:author.1.1",
+		"redirect_to": [
+			{ "@id": "urn:cite:perseus:author.1.2" },
+			{ "@id": "urn:cite:perseus:author.2.4" }
+		]
+	}
+
+...posted to **http://localhost:4567/test/urn/1** will produce triples like this...
+
+	<urn:cite:perseus:author.1.1> | <http://github.com/caesarfeta/JackSON/blob/master/docs/SCHEMA.md#src> | "http://localhost:4567/test/urn/1"
+	<urn:cite:perseus:author.1.1> | <http://perseus.org/rdf/redirectTo>                                   | <urn:cite:perseus:author.1.2>     
+	<urn:cite:perseus:author.1.1> | <http://perseus.org/rdf/redirectTo>                                   | <urn:cite:perseus:author.2.4>     
+
+...instead of the default...
+
+	<http://localhost:4567/test/urn/1> | <http://perseus.org/rdf/redirectTo> | <http://data.perseus.org/collections/urn:cite:perseus:author.1.2>
+	<http://localhost:4567/test/urn/1> | <http://perseus.org/rdf/redirectTo> | <http://data.perseus.org/collections/urn:cite:perseus:author.2.4>

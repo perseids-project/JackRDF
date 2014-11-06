@@ -122,6 +122,15 @@ class TestRdf < Minitest::Test
     check = Help.get
     assert_equal( check[0]["s"]["value"], "http://github.com/caesarfeta/JackRDF" )
   end
+  
+  # def test_problem
+  #   Help.empty
+  #   rdf = Help.handle
+  #   rdf.post( "http://localhost:4567/test/urn/1", "sample/img/problem.json" )
+  #   check = Help.get
+  #   assert( true )
+  # end
+  
 end
 
 class Help

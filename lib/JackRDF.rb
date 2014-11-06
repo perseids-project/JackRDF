@@ -12,6 +12,12 @@ class JackRDF
     @src = "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
   end
   
+  # Return the src verb.
+  # Used by the JackSON server.
+  def src_verb
+    @src
+  end
+  
   # url { String } URL to JSON-LD
   # file { String } Local path to JSON-LD
   def post( url, file )

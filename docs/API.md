@@ -19,3 +19,8 @@ Update RDF graph.
 Delete triples defined in JSON-LD from RDF graph.
 
 	rdf.delete( 'http://localhost/sample/test', '/var/www/JackRDF/sample/put.json' )
+
+# Quick command-line interface
+
+	cd lib
+	irb -I .

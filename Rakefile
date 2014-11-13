@@ -12,7 +12,7 @@ end
 FUSEKI_VERSION = "1.0.2"
 FUSEKI_DIR = "jena-fuseki-#{FUSEKI_VERSION}"
 FUSEKI_TAR = "#{FUSEKI_DIR}-distribution.tar.gz"
-FUSEKI_EXE = "fuseki/#{FUSEKI_DIR}/fuseki-server"
+FUSEKI_EXE = "#{FUSEKI_DIR}/fuseki-server"
 FUSEKI_TRIPLES = "/var/www/JackRDF/triples"
 FUSEKI_HOST = "http://localhost"
 FUSEKI_PORT = "4321"
@@ -36,13 +36,20 @@ namespace :data do
   end
 end
 
+namespace :ubuntu do
+  desc 'Install Java JRE and JDK on Ubuntu'
+  task :install do
+    `sudo apt-get install default-jre`
+    `sudo apt-get install default-jdk`
+  end
+end
+
 namespace :server do
   desc 'Download and install Fuseki'
   task :install do
     `curl -O http://archive.apache.org/dist/jena/binaries/#{FUSEKI_TAR}`
-    `mkdir fuseki`
-    `tar xzvf #{FUSEKI_TAR} -C fuseki`
-    `chmod +x #{FUSEKI_EXE} fuseki/#{FUSEKI_DIR}/s-**`
+    `tar xzvf #{FUSEKI_TAR}`
+    `chmod +x #{FUSEKI_EXE} #{FUSEKI_DIR}/s-**`
     `rm #{FUSEKI_TAR}`
   end
 

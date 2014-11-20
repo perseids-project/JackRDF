@@ -87,8 +87,8 @@ class JackRDF
   # url { String } URL to JSON file
   # file { String } Path to file
   def put( url, file )
-    delete( urn, file )
-    post( urn, file )
+    delete( url, file )
+    post( url, file )
   end
   
   # url { String } URL to JSON file

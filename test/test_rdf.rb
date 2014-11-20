@@ -5,12 +5,17 @@ require_relative '../lib/JackRDF'
 require 'rest_client'
 require 'sparql_model'
 
+
 # Want to run a single test?
 # You probably do when developing.
+
 # ruby test/test_rdf.rb --name test_AAA_post
+
 class TestRdf < Minitest::Test
   
+  
   # Make sure post method uses URL if no @id value is present
+  
   def test_AAA_post
     Help.empty
     rdf = Help.handle
@@ -25,7 +30,9 @@ class TestRdf < Minitest::Test
     assert( true )
   end
   
+  
   # Make sure triples are deleted entirely
+  
   def test_AAB_delete
     Help.empty
     rdf = Help.handle
@@ -35,7 +42,9 @@ class TestRdf < Minitest::Test
     assert_equal( check.length, 0 )
   end
   
+  
   # Make sure double posts are blocked
+  
   def test_AAC_double_post_block
     Help.empty
     rdf = Help.handle
@@ -49,8 +58,10 @@ class TestRdf < Minitest::Test
     assert( false )
   end
   
+  
   # Make sure CITE URNs are used as subject nodes 
   # when id_mode conditions are met
+  
   def test_AAD_cite_urn_subject
     Help.empty
     rdf = Help.handle
@@ -66,8 +77,10 @@ class TestRdf < Minitest::Test
     assert( true )
   end
   
+  
   # Make sure all sources are recorded 
   # when using CITE URNs as subject nodes
+  
   def test_AAE_cite_urn_multi
     Help.empty
     rdf = Help.handle
@@ -84,8 +97,10 @@ class TestRdf < Minitest::Test
     assert_equal( count, 3 )
   end
   
+  
   # Make sure sources are being deleted properly
   # when using CITE URNs with multiple JSON sources
+  
   def test_AAF_cite_urn_multi_delete
     Help.empty
     rdf = Help.handle
@@ -113,8 +128,10 @@ class TestRdf < Minitest::Test
     assert( false )
   end
   
+  
   # JSON-LD with specified id attribute
   # does not default to filename
+  
   def test_AAG_no_urn_id
     Help.empty
     rdf = Help.handle
@@ -123,13 +140,16 @@ class TestRdf < Minitest::Test
     assert_equal( check[0]["s"]["value"], "http://github.com/caesarfeta/JackRDF" )
   end
   
-  # def test_problem
-  #   Help.empty
-  #   rdf = Help.handle
-  #   rdf.post( "http://localhost:4567/test/urn/1", "sample/img/problem.json" )
-  #   check = Help.get
-  #   assert( true )
-  # end
+  
+  # Make sure put method is up to snuff
+  
+  def test_AAH_put
+    Help.empty
+    rdf = Help.handle
+    rdf.post( "http://localhost:4567/test/urn/1", "sample/cite/urn_02.json" )
+    rdf.put( "http://localhost:4567/test/urn/1", "sample/cite/urn_03.json" )
+    assert( true )
+  end
   
 end
 

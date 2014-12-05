@@ -22,6 +22,12 @@ FUSEKI_ENDPOINT = "#{FUSEKI_HOST}:#{FUSEKI_PORT}/#{FUSEKI_DATASTORE}"
 desc "Run tests"
 task :default => :test
 
+task :install do
+  Rake::Task["unbuntu:install"].invoke()
+  Rake::Task["server:install"].invoke()
+  `gem build`
+end
+
 namespace :data do
   desc 'Destroy all Fuseki data'
   task :destroy do

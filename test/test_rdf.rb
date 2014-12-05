@@ -2,8 +2,6 @@ require 'minitest/autorun'
 require 'benchmark'
 require 'rest_client'
 require_relative '../lib/JackRDF'
-require 'rest_client'
-require 'sparql_model'
 
 
 # Want to run a single test?

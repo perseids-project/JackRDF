@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "json-ld"
-  s.add_dependency "sparql_model"
+  s.add_dependency "sparql-client"
 end

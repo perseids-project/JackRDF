@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'json/ld'
-require 'sparql_model'
+require_relative 'sparql_quick'
 
 class JackRDF
   

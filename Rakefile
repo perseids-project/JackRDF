@@ -22,10 +22,8 @@ FUSEKI_ENDPOINT = "#{FUSEKI_HOST}:#{FUSEKI_PORT}/#{FUSEKI_DATASTORE}"
 desc "Run tests"
 task :default => :test
 
-task :install do
-  Rake::Task["unbuntu:install"].invoke()
-  Rake::Task["server:install"].invoke()
-  `gem build`
+task :start do
+  Rake::Task["server:start"].invoke()
 end
 
 namespace :data do
@@ -70,3 +68,8 @@ namespace :server do
   end
 end
 
+task :install do
+  Rake::Task["unbuntu:install"].invoke()
+  Rake::Task["server:install"].invoke()
+  `gem build`
+end

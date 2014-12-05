@@ -67,9 +67,3 @@ namespace :server do
     end
   end
 end
-
-task :install do
-  Rake::Task["unbuntu:install"].invoke()
-  Rake::Task["server:install"].invoke()
-  `gem build`
-end

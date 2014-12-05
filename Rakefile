@@ -1,6 +1,5 @@
 require 'bundler/gem_tasks'
 require 'rake/testtask'
-require 'sparql_model'
 
 Rake::TestTask.new do |t|
   t.libs = ['test']
@@ -32,6 +31,7 @@ namespace :data do
     STDOUT.puts "Sure you want to destroy all triples in #{FUSEKI_ENDPOINT}? (y/n)"
     input = STDIN.gets.strip
     if input == 'y'
+      require_relative 'lib/sparql_quick'
       quick = SparqlQuick.new( FUSEKI_ENDPOINT )
       quick.empty( :all )
     else

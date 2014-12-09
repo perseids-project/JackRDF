@@ -1,8 +1,6 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require 'sparql_model/version'
-
 Gem::Specification.new do |s|
   s.name        = 'JackRDF'
   s.version     = '1.0.1'

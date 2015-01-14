@@ -11,7 +11,7 @@ class JackRDF
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
     @urn = onto['uri_prefix'] ? onto['uri_prefix'] + "urn:" : "http://data.perseus.org/collections/urn:"
-    @src = onto['src_verb'] || "http://purl.org/dc/terms/references"
+    @src = onto['src_verb'] || "http://purl.org/dc/terms/source"
   end
   
   

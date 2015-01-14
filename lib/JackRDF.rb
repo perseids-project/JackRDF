@@ -7,11 +7,11 @@ class JackRDF
   
   # endp { String } Queryable Sparql endpoint
   
-  def initialize( endp )
+  def initialize( endp, onto )
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
-    @urn = "http://data.perseus.org/collections/urn:"
-    @src = "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
+    @urn = onto['uri_prefix'] ? onto['uri_prefix'] + "urn:" : "http://data.perseus.org/collections/urn:"
+    @src = onto['src_verb'] || "http://purl.org/dc/terms/references"
   end
   
   

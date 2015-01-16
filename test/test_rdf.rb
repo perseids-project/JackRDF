@@ -8,6 +8,7 @@ require_relative '../lib/JackRDF'
 # You probably do when developing.
 
 # ruby test/test_rdf.rb --name test_AAA_post
+# ruby test/test_rdf.rb --name test_AAC_double_post_block
 
 class TestRdf < Minitest::Test
   
@@ -17,10 +18,10 @@ class TestRdf < Minitest::Test
   def test_AAA_post
     Help.empty
     rdf = Help.handle
-    rdf.post( 'http://localhost:4567/test/urn/1', 'sample/post.json' )
+    rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
     check = Help.get
     check.each do |tri|
-      if tri["s"]["value"] != 'http://localhost:4567/test/urn/1'
+      if tri["s"]["value"] != 'nodetest/urn/1'
         assert( false )
         return
       end
@@ -34,8 +35,8 @@ class TestRdf < Minitest::Test
   def test_AAB_delete
     Help.empty
     rdf = Help.handle
-    rdf.post( 'http://localhost:4567/test/urn/1', 'sample/post.json' )
-    rdf.delete( 'http://localhost:4567/test/urn/1', 'sample/post.json' )
+    rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
+    rdf.delete( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
     check = Help.get
     assert_equal( check.length, 0 )
   end
@@ -46,14 +47,14 @@ class TestRdf < Minitest::Test
   def test_AAC_double_post_block
     Help.empty
     rdf = Help.handle
-    rdf.post( 'http://localhost:4567/test/urn/1', 'sample/post.json' )
     begin
-      rdf.post( 'http://localhost:4567/test/urn/1', 'sample/post.json' )
+      rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
+      rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
     rescue
       assert( true )
-      return
+    else
+      assert( false )
     end
-    assert( false )
   end
   
   
@@ -63,9 +64,9 @@ class TestRdf < Minitest::Test
   def test_AAD_cite_urn_subject
     Help.empty
     rdf = Help.handle
-    rdf.post( 'http://localhost:4567/test/urn/1', 'sample/id.json' )
+    rdf.post( 'nodetest/urn/1', Help.root( 'sample/id.json' ))
     url = Help.get
-    file = rdf.file_to_hash( 'sample/id.json' )
+    file = rdf.file_to_hash( Help.root( 'sample/id.json' ))
     url.each do |tri|
       if tri["s"]["value"] != file['@id']
         assert( false )
@@ -83,7 +84,7 @@ class TestRdf < Minitest::Test
     Help.empty
     rdf = Help.handle
     (1..3).each do |n|
-      rdf.post( "http://localhost:4567/test/urn/#{n}", "sample/cite/urn_0#{n}.json" )
+      rdf.post( "nodetest/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
     check = Help.get
     count = 0
@@ -103,10 +104,10 @@ class TestRdf < Minitest::Test
     Help.empty
     rdf = Help.handle
     (1..3).each do |n|
-      rdf.post( "http://localhost:4567/test/urn/#{n}", "sample/cite/urn_0#{n}.json" )
+      rdf.post( "nodetest/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
     (1..2).each do |n|
-      rdf.delete( "http://localhost:4567/test/urn/#{n}", "sample/cite/urn_0#{n}.json" )
+      rdf.delete( "nodetest/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
     check = Help.get
     disc = 0
@@ -133,7 +134,7 @@ class TestRdf < Minitest::Test
   def test_AAG_no_urn_id
     Help.empty
     rdf = Help.handle
-    rdf.post( "http://localhost:4567/test/urn/1", "sample/no_urn_id.json" )
+    rdf.post( "nodetest/urn/1", Help.root( "sample/no_urn_id.json" ) )
     check = Help.get
     assert_equal( check[0]["s"]["value"], "http://github.com/caesarfeta/JackRDF" )
   end
@@ -144,16 +145,24 @@ class TestRdf < Minitest::Test
   def test_AAH_put
     Help.empty
     rdf = Help.handle
-    rdf.post( "http://localhost:4567/test/urn/1", "sample/cite/urn_02.json" )
-    rdf.put( "http://localhost:4567/test/urn/1", "sample/cite/urn_03.json" )
+    rdf.post( "nodetest/urn/1", Help.root( "sample/cite/urn_02.json" ) )
+    rdf.put( "nodetest/urn/1", Help.root( "sample/cite/urn_03.json" ) )
     assert( true )
   end
   
 end
 
 class Help
+  
+  def self.root( path )
+    root = File.expand_path('../..', __FILE__ )
+    "#{ root }/#{path}"
+  end
+  
+  # Hacky way to retrieve RDF src verb
+  
   def self.src
-    "http://github.com/caesarfeta/JackRDF/blob/master/docs/SCHEMA.md#src"
+    JackRDF.new( self.ds ).src_verb
   end
   
   def self.handle

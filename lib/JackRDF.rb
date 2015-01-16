@@ -7,11 +7,16 @@ class JackRDF
   
   # endp { String } Queryable Sparql endpoint
   
-  def initialize( endp, onto )
+  def initialize( endp, onto=nil )
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
-    @urn = onto['uri_prefix'] ? onto['uri_prefix'] + "urn:" : "http://data.perseus.org/collections/urn:"
-    @src = onto['src_verb'] || "http://purl.org/dc/terms/source"
+    if onto != nil 
+      @urn = onto['uri_prefix'] + "urn:"
+      @src = onto['src_verb']
+    else
+      @urn = "http://data.perseus.org/collections/urn:"
+      @src = "http://purl.org/dc/terms/source"
+    end
   end
   
   
@@ -127,7 +132,7 @@ class JackRDF
     
     # Make sure subject URN and source JSON match
     
-    puts @sparql.count([ hash['@id'].tagify, @src.tagify, url ])
+    # puts @sparql.count([ hash['@id'].tagify, @src.tagify, url ])
     if @sparql.count([ hash['@id'].tagify, @src.tagify, url ]) != 1
       throw JackRDF_Critical, "#{hash['@id']} is not src'd by #{url}"
     end

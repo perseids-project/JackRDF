@@ -6,26 +6,33 @@ class SparqlQuick
   
   # _endpoint { String }
   # _prefixes { Hash }
+  
   def initialize( _endpoint, _prefixes=nil )
     @endpoint = _endpoint
     @prefixes = _prefixes
     
     #  Grab query and update handles
+    
     @_query = handle( 'query' )
     @_update = handle( 'update' )
   end
   
+  
   # Insert a single triple
   # _triple { Array }
+  
   def insert( _triple )
     triple = uris( _triple )
     
     #  Insert the data
+    
     @_update.insert_data( graph( triple ) )
   end
   
+  
   # Update a single triple
   # _triple { Array }
+  
   def update( _triple )
     toDelete = _triple.clone
     toDelete[2] = :o
@@ -37,11 +44,14 @@ class SparqlQuick
     insert( _triple )
   end
   
+  
   # Delete a triple or partial triple
   # _triple { Array }
+  
   def delete( _triple )
     
     #  Safety check
+    
     check_count = 0
     _triple.each do | check |
       if check.class == ::Symbol
@@ -57,10 +67,12 @@ class SparqlQuick
     end
     
     #  Check to see what you're deleting
+    
     results = select( _triple )
     
     #  SPARQL::Client.delete_data can only delete a complete
     #  s,p,o triple.  So we have to fill in the details.
+    
     results.each do | hash |
       toDelete = _triple.clone
       hash.keys.each do | key |
@@ -81,15 +93,19 @@ class SparqlQuick
     end
   end
   
+  
   # _triple { Array }
   # @return { Array }
+  
   def select( _triple )
     triple = uris( _triple )
     
     #  Grab a SPARQL handle and run the query
+    
     query = @_query.select.where( triple )
     
     #  Build the results object
+    
     results=[]
     query.each_solution.each do | val |
       results.push( val.bindings )
@@ -97,8 +113,10 @@ class SparqlQuick
     results
   end
   
+  
   # _double { Array }
   # @return { Array, String }
+  
   def value( _double )
     results = get_objects( _double )
     if results.length == 0
@@ -106,6 +124,7 @@ class SparqlQuick
     end
     
     #  Get the values
+    
     out = []
     results.each do | val |
       out.push( val[:o].to_s )
@@ -113,28 +132,36 @@ class SparqlQuick
     
     #  If only a single value is returned don't return
     #  an array with one element in it.
+    
     if out.length == 1
       return out[0]
     end
     
     #  Return an array
+    
     return out
   end
   
+  
   # _double { Array }
   # @return { Fixnum }
+  
   def count( _triple )
     select( _triple ).length
   end
   
+  
   # _type { String }
   # @return { SPARQL::Client }
+  
   def handle( _type )
     SPARQL::Client.new( File.join( @endpoint, _type ) )
   end
   
+  
   # _double { Array }
   # _side { Symbol }
+  
   def indexed_urns( _double, _side )
     case _side
       when :o then get_objects( _double )
@@ -146,9 +173,11 @@ class SparqlQuick
   # _double { Array }
   # _side { Symbol }
   # @return { Integer }
+  
   def next_index( _double, _side=:o )
     
     #  Where's the indexed URNs?
+    
     results = indexed_urns( _double, _side )
     return 1 if results.empty?
     ns = []
@@ -161,13 +190,15 @@ class SparqlQuick
   # Take a URN and return just the index if it exists
   # _urn { RDF::URI }
   # @return { Integer }
+  
   def urn_index( _urn )
     _urn.to_s.gsub(/\d+$/).next.to_i
   end
   
   # Build URIs
   # _triple { Array }
-  # @return { Array } 
+  # @return { Array }
+   
   def uris( _triple )
     triple=[]
     _triple.each do | val |
@@ -176,19 +207,24 @@ class SparqlQuick
     triple
   end
   
+  
   # _val { String, Symbol, etc... }
   # _return { RDF::URI, RDF::Literal, Symbol }
+  
   def uri( _val )
     
     #  If it's a symbol get out of there.
+    
     if _val.class == ::Symbol
       return _val
     end
     
     #  Are you a URI or a literal?
+    
     if _val.class == ::String
       
       #  URI with no prefix
+      
       first = _val[0]
       last = _val[-1,1]
       if first == "<" && last == ">"
@@ -196,6 +232,7 @@ class SparqlQuick
       end
       
       #  With prefix
+      
       unless @prefixes == nil
         pre, colon, last = _val.rpartition(':')
         pre = pre.to_sym
@@ -207,8 +244,10 @@ class SparqlQuick
     RDF::Literal( _val )
   end
   
+  
   # Empty the entire database
   # _verify { String }
+  
   def empty( _verify=nil )
     keyword = :all
     unless _verify == keyword
@@ -217,32 +256,40 @@ class SparqlQuick
     @_update.clear( :all )
   end
   
+  
   # _double { Array }
   # @return { Array }
+  
   def get_objects( _double )
     triple = _double.clone
     triple[2] = :o
     select( triple )
   end
   
+  
   # _double { Array }
   # @return { Array }
+  
   def get_subjects( _double )
     triple = _double.clone
     triple.unshift( :s )
     select( triple )
   end
   
+  
   # Remove a triple for real...
   # _triple { Array }
+  
   def destroy( _triple )
     triple = uris( _triple )
     @_update.delete_data( graph( triple ) )
   end
   
+  
   # Build a RDF::Graph triple
   # _triple { Array }
   # @return { RDF::Graph }
+  
   def graph( _triple )
     RDF::Graph.new { | graph |
       graph << _triple
@@ -255,23 +302,31 @@ end
 
 class String
   
+  
   # Clip the first and last characters from a string
   # @return { String }
+  
   def clip
     self[1..-2]
   end
   
+  
   # Check to see if we're looking at an integer in string's clothing
+  
   def is_i?
      !!( self =~ /\A[-+]?[0-9]+\z/ )
   end
   
+  
   # Return integer
+  
   def just_i
     /\d+/.match( self ).to_s.to_i
   end
   
+  
   # Wrap <>
+  
   def tagify
     this = self
     if this[0] != "<"

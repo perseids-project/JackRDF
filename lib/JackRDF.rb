@@ -5,7 +5,8 @@ require_relative 'sparql_quick'
 class JackRDF
   
   
-  # endp { String } Queryable Sparql endpoint
+  # Initialize JackRDF 
+  # Endpoint and ontology prefix hash are the arguments
   
   def initialize( endp, onto=nil )
     @endp = endp
@@ -28,37 +29,27 @@ class JackRDF
   end
   
   
-  # url { String } URL to JSON-LD
-  # file { String } Local path to JSON-LD
+  ## Preparations...
   
-  def post( url, file )
+  def prep( url, file )
     
-    # Does this already exist?
+    # Make sure URL has a valid protocol
     
-    if @sparql.count([ url.tagify,:p,:o ]) > 0
-      throw JackRDF_Critical, "#{url} graph already exists. Use .put()"
-    end
+    protocol_chk( url )
+    
+    # Does the file actually exist?
+    
+    file_chk( file )
     
     # Turn JSON into a hash for checking
     
-    hash = file_to_hash( file )
-    if hash.has_key?('@context') == false
-      throw JackRDF_Error, "#{file} is not JSON-LD"
-    end
+    hash = jsonld_chk( file )
     context = hash['@context']
     
-    # CITE URN put() check
+    # Add src.. check for src
     
-    if id_mode( hash ) == true
-      if @sparql.count([ hash['@id'].tagify,@src.tagify,url ]) > 0
-        throw JackRDF_Critical, "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
-      end
-      
-      # Add src
-      
-      context['src'] = @src
-      hash['src'] = url
-    end
+    context['src'] = @src
+    hash['src'] = url
     
     # RDF subject is url to JSON-LD by default
     
@@ -68,20 +59,90 @@ class JackRDF
     
     # Convert to RDF
     
-    rdf = hash_to_rdf( hash )
+    [ hash, hash_to_rdf( hash ) ]
+  end
+  
+  
+  # url { String } URL to JSON-LD
+  # file { String } Local path to JSON-LD
+  
+  def post( url, file )
+    
+    # Convert to RDF
+    
+    hash, rdf = prep( url, file )
+    
+    # See if the @id and src pair already exist
+    
+    if @sparql.count([ hash['@id'].tagify, @src.tagify, url ]) > 0
+      throw JackRDF_Critical, "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
+    end
     
     # CITE URN support
     
-    if id_mode( hash ) == true
-      rdf = urn_rdf( hash, rdf )
-    end
+    rdf = urn_rdf( hash, rdf )
     
     # Insert the RDF data
     
-    @sparql._update.insert_data( rdf )
+    begin
+      @sparql._update.insert_data( rdf )
+    rescue
+      throw JackRDF_Critical, "There was an error updating fuseki"
+    end
+    
+    # Return the RDF data
+    
+    return rdf
   end
   
-  # hash { Hash }
+  
+  # url { String } URL to JSON file
+  # file { String } Path to file
+  
+  def put( url, file )
+    delete( url, file )
+    post( url, file )
+  end
+  
+  
+  # url { String } URL to JSON file
+  # file { String } Path to file
+  
+  def delete( url, file )
+    
+    # Convert to RDF
+    
+    hash, rdf = prep( url, file )
+    
+    # Make sure subject URN and source JSON match
+    
+    if @sparql.count([ hash['@id'].tagify, @src.tagify, url ]) != 1
+      throw JackRDF_Critical, "#{hash['@id']} is not src'd by #{url}"
+    end
+    
+    # CITE URN support
+    
+    rdf = urn_rdf( hash, rdf )
+    
+    # Delete the relevant triples
+        
+    rdf.each do |tri|
+      @sparql._update.delete_data( @sparql.graph( tri ) )
+    end
+    
+    begin
+      @sparql.delete([ hash['@id'].tagify, @src.tagify, url ])
+    rescue
+      throw JackRDF_Critical, "There was an error deleting triples"
+    end
+    
+    # All is well...
+    
+    return true
+  end
+  
+  
+  # We don't want to expand node ids with a 'urn' prefix
   
   def urn_rdf( hash, rdf )
     urn_rdf = RDF::Graph.new
@@ -93,6 +154,9 @@ class JackRDF
     urn_rdf
   end
   
+  
+  # We don't want to expand object node ids with a 'urn' prefix
+  
   def urn_obj( obj )
     str = obj.to_s
     if str.include?( @urn )
@@ -101,90 +165,81 @@ class JackRDF
     obj
   end
   
-  # hash { Hash }
+  
+  # Turn a hash into RDF
   
   def hash_to_rdf( hash )
-    rdf = to_rdf( to_jsonld( hash ) )
+    to_rdf( to_jsonld( hash ) )
   end
   
-  # url { String } URL to JSON file
-  # file { String } Path to file
   
-  def put( url, file )
-    delete( url, file )
-    post( url, file )
-  end
-  
-  # url { String } URL to JSON file
-  # file { String } Path to file
-  
-  def delete( url, file )
-    hash = to_hash( File.read( file ) )
-    if hash.has_key?('@context') == false
-      throw JackRDF_Error, "#{file} is not JSON-LD"
-    end
-    
-    # Non-CITE mode deletion is easy
-    
-    if id_mode( hash ) == false
-      return @sparql.delete([ url.tagify, :p, :o ])
-    end
-    
-    # Make sure subject URN and source JSON match
-    
-    # puts @sparql.count([ hash['@id'].tagify, @src.tagify, url ])
-    if @sparql.count([ hash['@id'].tagify, @src.tagify, url ]) != 1
-      throw JackRDF_Critical, "#{hash['@id']} is not src'd by #{url}"
-    end
-    
-    # Delete the relevant triples
-    
-    rdf = urn_rdf( hash, hash_to_rdf( hash ) )
-    rdf.each do |tri|
-      @sparql._update.delete_data( @sparql.graph( tri ) )
-    end
-    @sparql.delete([ hash['@id'].tagify, @src.tagify, url ])
-  end
-  
-  # Check for CITE mode markers
-  # hash { Hash }
-  
-  def id_mode( hash )
-    context = hash['@context']
-    if hash.has_key?('@id') == true 
-      if context.has_key?('urn') && context['urn'] == @urn && hash['@id'].include?( 'urn:' )
-        return true
-      end
-    end
-    false
-  end
-  
-  # file { String } Path to file
-  # @return { Hash }
+  # Turn JSON-LD file into a hash
   
   def file_to_hash( file )
     to_hash( File.read( file ) )
   end
   
-  # json { JSON }
-  # @return { Hash }
+  
+  # Turn JSON-LD into a hash
   
   def to_hash( json )
     JSON.parse( json )
   end
   
-  # hash { Hash }
-  # @return { JSON-LD }
+  
+  # Turn hash into JSON-LD
   
   def to_jsonld( hash )
     JSON::LD::API.expand( hash )
   end
   
-  # jsonld { JSON-LD }
-  # @return { RDF::Graph }
+  
+  # Turn JSON-LD into RDF
   
   def to_rdf( jsonld )
-    RDF::Graph.new << JSON::LD::API.toRdf( jsonld )
+    rdf = RDF::Graph.new << JSON::LD::API.toRdf( jsonld )
+    if rdf.count == 0
+      throw JackRDF_Critical, "No triples could be created from JSON-LD"
+    end
+    rdf
+  end
+  
+  
+  # Make sure a path is a real file
+  
+  def file_chk( path )
+    if File.exist?( path ) == false
+      throw JackRDF_Critical, "#{path} is not a valid file"
+    end
+  end
+  
+  
+  # Make sure file is JSON-LD
+  
+  def jsonld_chk( file )
+    hash = file_to_hash( file )
+    if hash.has_key?('@context') == false
+      throw JackRDF_Error, "#{file} is not JSON-LD"
+    end
+    return hash
+  end
+  
+  
+  # Print RDF graph triples
+  
+  def tri_print( rdf )
+    rdf.each do | triple |
+      puts triple.inspect
+    end
+  end
+  
+  
+  # Does the URL have a protocol?
+  
+  def protocol_chk( url )
+    if URI( url ).scheme == nil
+      throw JackRDF_Critical, "#{url} is missing protocol"
+    end
   end
   
 end

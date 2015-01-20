@@ -3,6 +3,6 @@
 		"github": "http://github.com/caesarfeta/",
 		"name": "http://xmlns.com/foaf/0.1/name/"
 	},
-	"@id": "github:JackRDF",
+	"@id": "http://JackRDF/test/no-id",
 	"name": "JackRDF"
 }

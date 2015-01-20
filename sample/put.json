@@ -4,6 +4,7 @@
     "homepage": "http://xmlns.com/foaf/0.1/homepage",
     "avatar": "http://xmlns.com/foaf/0.1/avatar"
   },
+  "@id": "urn:put",
   "name": "Manuel Surly",
   "homepage": "http://manuel.surly.org/",
   "avatar": "http://twitter.com/account/profile_image/manuelsurly"

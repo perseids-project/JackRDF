@@ -9,6 +9,9 @@ require_relative '../lib/JackRDF'
 
 # ruby test/test_rdf.rb --name test_AAA_post
 # ruby test/test_rdf.rb --name test_AAC_double_post_block
+# ruby test/test_rdf.rb --name test_AAG_no_urn_id
+# ruby test/test_rdf.rb --name test_AAF_cite_urn_multi_delete
+# ruby test/test_rdf.rb --name test_scratch
 
 class TestRdf < Minitest::Test
   
@@ -16,12 +19,13 @@ class TestRdf < Minitest::Test
   # Make sure post method uses URL if no @id value is present
   
   def test_AAA_post
+    url = 'http://jackrdf/test/urn/1'
     Help.empty
     rdf = Help.handle
-    rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
+    graph = rdf.post( url, Help.root( 'sample/post.json' ))
     check = Help.get
     check.each do |tri|
-      if tri["s"]["value"] != 'nodetest/urn/1'
+      if tri["s"]["value"] != url
         assert( false )
         return
       end
@@ -35,8 +39,8 @@ class TestRdf < Minitest::Test
   def test_AAB_delete
     Help.empty
     rdf = Help.handle
-    rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
-    rdf.delete( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
+    rdf.post( 'http://jackrdf/test/urn/1', Help.root( 'sample/post.json' ))
+    rdf.delete( 'http://jackrdf/test/urn/1', Help.root( 'sample/post.json' ))
     check = Help.get
     assert_equal( check.length, 0 )
   end
@@ -48,8 +52,8 @@ class TestRdf < Minitest::Test
     Help.empty
     rdf = Help.handle
     begin
-      rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
-      rdf.post( 'nodetest/urn/1', Help.root( 'sample/post.json' ))
+      rdf.post( 'http://jackrdf/test/urn/1', Help.root( 'sample/post.json' ))
+      rdf.post( 'http://jackrdf/test/urn/1', Help.root( 'sample/post.json' ))
     rescue
       assert( true )
     else
@@ -64,7 +68,7 @@ class TestRdf < Minitest::Test
   def test_AAD_cite_urn_subject
     Help.empty
     rdf = Help.handle
-    rdf.post( 'nodetest/urn/1', Help.root( 'sample/id.json' ))
+    rdf.post( 'http://jackrdf/test/urn/1', Help.root( 'sample/id.json' ))
     url = Help.get
     file = rdf.file_to_hash( Help.root( 'sample/id.json' ))
     url.each do |tri|
@@ -84,7 +88,7 @@ class TestRdf < Minitest::Test
     Help.empty
     rdf = Help.handle
     (1..3).each do |n|
-      rdf.post( "nodetest/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
+      rdf.post( "http://jackrdf/test/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
     check = Help.get
     count = 0
@@ -103,12 +107,21 @@ class TestRdf < Minitest::Test
   def test_AAF_cite_urn_multi_delete
     Help.empty
     rdf = Help.handle
+    
+    # Add all 3 CITE URN json files
+    
     (1..3).each do |n|
-      rdf.post( "nodetest/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
+      rdf.post( "http://jackrdf/test/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
+    
+    return 
+    
     (1..2).each do |n|
-      rdf.delete( "nodetest/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
+      rdf.delete( "http://jackrdf/test/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
+    
+    # Get Fuseki triples
+    
     check = Help.get
     disc = 0
     src = 0
@@ -117,10 +130,14 @@ class TestRdf < Minitest::Test
         disc += 1
       end
       if item["p"]["value"].include?( "src" )
-        src += 1
+        src = item["o"]["value"][ "src" ]
       end
     end
-    if src == 1 && disc == 1
+    
+    # Make sure things matchup
+
+    json = rdf.file_to_hash( "sample/cite/urn_03.json" )
+    if src == "http://jackrdf/test/urn/3" && disc == json["discoverer"].length
       assert( true )
       return
     end
@@ -128,15 +145,17 @@ class TestRdf < Minitest::Test
   end
   
   
-  # JSON-LD with specified id attribute
+  # JSON-LD with specified URL id attribute
   # does not default to filename
   
-  def test_AAG_no_urn_id
+  def test_AAG_url_id
     Help.empty
     rdf = Help.handle
-    rdf.post( "nodetest/urn/1", Help.root( "sample/no_urn_id.json" ) )
+    path = Help.root( "sample/url_id.json" )
+    rdf.post( "http://jackrdf/test/urn/1", path )
+    json = rdf.file_to_hash( path )
     check = Help.get
-    assert_equal( check[0]["s"]["value"], "http://github.com/caesarfeta/JackRDF" )
+    assert_equal( check[0]["s"]["value"], json['@id'] )
   end
   
   
@@ -145,8 +164,8 @@ class TestRdf < Minitest::Test
   def test_AAH_put
     Help.empty
     rdf = Help.handle
-    rdf.post( "nodetest/urn/1", Help.root( "sample/cite/urn_02.json" ) )
-    rdf.put( "nodetest/urn/1", Help.root( "sample/cite/urn_03.json" ) )
+    rdf.post( "http://jackrdf/test/urn/1", Help.root( "sample/cite/urn_02.json" ))
+    rdf.put( "http://jackrdf/test/urn/1", Help.root( "sample/cite/urn_03.json" ))
     assert( true )
   end
   

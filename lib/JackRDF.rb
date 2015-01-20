@@ -75,7 +75,7 @@ class JackRDF
     # See if the @id and src pair already exist
     
     if @sparql.count([ hash['@id'].tagify, @src.tagify, url ]) > 0
-      throw JackRDF_Critical, "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
+      raise JackRDF_Critical, "Triples sourced from #{url} already exist in #{hash['urn']} graph. Use .put()"
     end
     
     # CITE URN support
@@ -87,7 +87,7 @@ class JackRDF
     begin
       @sparql._update.insert_data( rdf )
     rescue
-      throw JackRDF_Critical, "There was an error updating fuseki"
+      raise JackRDF_Critical, "There was an error updating fuseki"
     end
     
     # Return the RDF data
@@ -117,7 +117,7 @@ class JackRDF
     # Make sure subject URN and source JSON match
     
     if @sparql.count([ hash['@id'].tagify, @src.tagify, url ]) != 1
-      throw JackRDF_Critical, "#{hash['@id']} is not src'd by #{url}"
+      raise JackRDF_Critical, "#{hash['@id']} is not src'd by #{url}"
     end
     
     # CITE URN support
@@ -133,7 +133,7 @@ class JackRDF
     begin
       @sparql.delete([ hash['@id'].tagify, @src.tagify, url ])
     rescue
-      throw JackRDF_Critical, "There was an error deleting triples"
+      raise JackRDF_Critical, "There was an error deleting triples"
     end
     
     # All is well...
@@ -199,7 +199,7 @@ class JackRDF
   def to_rdf( jsonld )
     rdf = RDF::Graph.new << JSON::LD::API.toRdf( jsonld )
     if rdf.count == 0
-      throw JackRDF_Critical, "No triples could be created from JSON-LD"
+      raise JackRDF_Error, "No triples could be created from JSON-LD"
     end
     rdf
   end
@@ -209,7 +209,7 @@ class JackRDF
   
   def file_chk( path )
     if File.exist?( path ) == false
-      throw JackRDF_Critical, "#{path} is not a valid file"
+      raise JackRDF_Critical, "#{path} is not a valid file"
     end
   end
   
@@ -219,7 +219,7 @@ class JackRDF
   def jsonld_chk( file )
     hash = file_to_hash( file )
     if hash.has_key?('@context') == false
-      throw JackRDF_Error, "#{file} is not JSON-LD"
+      raise JackRDF_Error, "#{file} is not JSON-LD"
     end
     return hash
   end
@@ -238,7 +238,7 @@ class JackRDF
   
   def protocol_chk( url )
     if URI( url ).scheme == nil
-      throw JackRDF_Critical, "#{url} is missing protocol"
+      raise JackRDF_Critical, "#{url} is missing protocol"
     end
   end
   

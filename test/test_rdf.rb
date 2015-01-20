@@ -11,7 +11,7 @@ require_relative '../lib/JackRDF'
 # ruby test/test_rdf.rb --name test_AAC_double_post_block
 # ruby test/test_rdf.rb --name test_AAG_no_urn_id
 # ruby test/test_rdf.rb --name test_AAF_cite_urn_multi_delete
-# ruby test/test_rdf.rb --name test_scratch
+# ruby test/test_rdf.rb --name test_AAH_put
 
 class TestRdf < Minitest::Test
   
@@ -114,8 +114,6 @@ class TestRdf < Minitest::Test
       rdf.post( "http://jackrdf/test/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
     
-    return 
-    
     (1..2).each do |n|
       rdf.delete( "http://jackrdf/test/urn/#{n}", Help.root( "sample/cite/urn_0#{n}.json" ))
     end
@@ -124,19 +122,19 @@ class TestRdf < Minitest::Test
     
     check = Help.get
     disc = 0
-    src = 0
+    src = ''
     check.each do |item|
       if item["p"]["value"].include?( "discoverer" )
-        disc += 1
+          disc += 1
       end
-      if item["p"]["value"].include?( "src" )
-        src = item["o"]["value"][ "src" ]
+      if item["p"]["value"] == rdf.src_verb
+        src = item["o"]["value"]
       end
     end
     
     # Make sure things matchup
 
-    json = rdf.file_to_hash( "sample/cite/urn_03.json" )
+    json = rdf.file_to_hash( "sample/cite/urn_03.json" )    
     if src == "http://jackrdf/test/urn/3" && disc == json["discoverer"].length
       assert( true )
       return

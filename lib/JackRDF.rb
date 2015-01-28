@@ -145,13 +145,13 @@ class JackRDF
   # We don't want to expand node ids with a 'urn' prefix
   
   def urn_rdf( hash, rdf )
-    urn_rdf = RDF::Graph.new
+    graph = RDF::Graph.new
     rdf.each do |tri|
       tri.subject = RDF::Resource.new( hash['@id'] )
       tri.object = urn_obj( tri.object )
-      urn_rdf << tri
+      graph << tri
     end
-    urn_rdf
+    graph
   end
   
   

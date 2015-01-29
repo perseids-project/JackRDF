@@ -12,7 +12,7 @@ class JackRDF
     @endp = endp
     @sparql = SparqlQuick.new( @endp )
     if onto != nil 
-      @urn = onto['uri_prefix'] + "urn:"
+      @urn = onto['uri_prefix']
       @src = onto['src_verb']
     else
       @urn = "http://data.perseus.org/collections/urn:"
